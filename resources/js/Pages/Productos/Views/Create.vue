@@ -112,111 +112,49 @@
     </BreezeAuthenticatedLayout>
 </template>
 
-<script setup>
+<script >
 import BreezeAuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue"
 import { Head, Link } from "@inertiajs/vue3"
 import InputText from 'primevue/inputtext';
 import Card from 'primevue/card';
 import 'primeicons/primeicons.css';
-import { ref } from 'vue';
+
 import Textarea from 'primevue/textarea';
 import FloatLabel from 'primevue/floatlabel';
 import Select from 'primevue/select';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
-
-
-
-
-
-const FormCreate = ref({
-        nombre: ''
-        , descripcion: ''
-        , precio:''
-        , costo: ''
-        , marca:''
-        , categoria: ''
-        , ubicacion: ''
-        , ganancia: ''
-        , porcentaje: '20'
-        , cantidad:'1'
-        , costoUnitario:''
-        , gananciaTotal:''
-    });
-
-const categorias = [
-  { name: 'Electrónica', code: 'ele' },
-  { name: 'Ropa', code: 'rop' },
-  { name: 'Alimentos', code: 'ali' }
-];
-
-const ubicaciones = [
-  { name: 'Almacén A', code: 'almA' },
-  { name: 'Almacén B', code: 'almB' },
-  { name: 'Almacén C', code: 'almC' }
-];
-const marcas = [
-  { name: 'Papelería X', code: 'papX' },
-  { name: 'Papelería Y', code: 'papY' },
-  { name: 'Papelería Z', code: 'papZ' },
-  { name: 'Papelería A', code: 'papA' },
-  { name: 'Papelería B', code: 'papB' },
-];
-
-
-function calculaPrecio(){
-    let ganacia = FormCreate.value.costo*(FormCreate.value.porcentaje/100)/FormCreate.value.cantidad;
-    FormCreate.value.ganancia = ganacia;
-    FormCreate.value.precio = (parseFloat(FormCreate.value.costoUnitario) + parseFloat(FormCreate.value.ganancia))
-    FormCreate.value.gananciaPesos=
-    FormCreate.value.gananciaTotal=FormCreate.value.ganancia*FormCreate.value.cantidad;
-    calculaCostoUnitario();
+import test from "../Composables/test";
+export default {
+    props: {
+        token: String
+    },
+    components: {
+        BreezeAuthenticatedLayout
+    ,   Head
+    ,   InputText
+    ,   Card
+    ,   Textarea
+    ,   FloatLabel
+    ,   Select
+    ,   InputGroup
+    ,   InputGroupAddon
+    },
+    setup( props ) {
+        const {
+            categorias
+        ,   ubicaciones
+        ,   marcas
+        ,   FormCreate
+        ,   submitform
+    } = test (props) 
+    return{
+        categorias
+        ,   ubicaciones
+        ,   marcas
+        ,   FormCreate
+        ,   submitform
+        } 
+    }
 }
-
-function calculaCostoUnitario(){
-    FormCreate.value.costoUnitario=FormCreate.value.costo/FormCreate.value.cantidad
-    calculaPrecio()
-}
-
-function calculaGanancia(){
-    FormCreate.value.porcentaje=((FormCreate.value.precio*100)/FormCreate.value.costoUnitario)-100;
-    calculaPrecio();
-}
-
-function lipiar(){
-    FormCreate.value.costo = 0;
-    FormCreate.value.cantidad = 1;
-    FormCreate.value.costoUnitario = 0;
-    FormCreate.value.precio = 0;
-    FormCreate.value.porcentaje = 20;
-    FormCreate.value.ganancia = 0;
-    FormCreate.value.gananciaTotal = 0;
-}
-async function submitform () {
-        const url = new URL('productos.store', window.location.origin); //debes registrarla en el arvhico de rutas, recuerda revisar el controldor y el metodo respectivo
-        //url.searchParams.append('nombre_del_parametro', parametro); //asi agregamos todos los parametros que quieras emter a la URL, NO es necesario que los definas en la ruta
-        const options = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-        try {
-            const response = await fetch(url, options);
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status} ${response.statusText}`);
-            }
-            const data = await response.json();
-            if (data.error) {
-               // aqui va todo el codigo en caso que responda con un error la peticion
-            } else {
-                //Si no hay errores aqui manejas lo demas recuerda que los datos accedes con data.campo 
-            }
-            return data;
-        } catch (error) {
-            console.log('Error en metodo fetch:', error);
-        }
-}
-
-
 </script>

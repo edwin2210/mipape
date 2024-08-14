@@ -25,7 +25,9 @@ class ProductosController extends Controller
      */
     public function create()
     {
+        $token = token_api();
         return Inertia::render('Productos/Views/Create', [
+            'token' => $token
         ]);
     }
 
